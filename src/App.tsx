@@ -4,8 +4,13 @@ import ContactList from './components/ContactList'; // Kişi listesini gösterme
 import { Container, Typography, TextField } from "@mui/material"; // Material UI bileşenleri
 
 function App() {
-  // Tüm kişileri saklamak için state
-  const [contacts, setContacts] = useState<{ id: number; name: string; phone: string }[]>([]);
+  // Tüm kişileri saklamak için state ve LocalStorageden alınması
+  const [contacts, setContacts] = useState<{ id: number; name: string; phone: string }[]>(
+    () => {
+      const savedContacts = localStorage.getItem("contacts");
+      return savedContacts ? JSON.parse(savedContacts) : [];
+    }
+  );
 
   // Arama sorgusunu saklamak için state
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,13 +44,13 @@ function App() {
   useEffect(() => {
     const savedContacts = localStorage.getItem("contacts");
     if (savedContacts) {
-      setContacts(JSON.parse(savedContacts)); // LocalStorage'daki JSON formatındaki veriyi çözüp state'e ekleme
+      setContacts(JSON.parse(savedContacts));
     }
   }, []);
 
   // LocalStorage'a verileri kaydetme (kişiler state'i değiştiğinde otomatik çalışır)
   useEffect(() => {
-    localStorage.setItem("contacts", JSON.stringify(contacts)); // State'teki veriyi JSON formatında LocalStorage'a kaydetme
+    localStorage.setItem("contacts", JSON.stringify(contacts));
   }, [contacts]);
 
   // Arama sorgusuna göre filtrelenmiş kişileri döndürme
